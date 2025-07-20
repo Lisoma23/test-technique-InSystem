@@ -1,11 +1,11 @@
 import './App.css';
-import Example from './Example';
+import API from './HubeauAPI';
 
 export default function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <Example/>
+        <API/>
       </header>
     </div>
   );
