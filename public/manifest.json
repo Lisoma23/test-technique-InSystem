@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Hubeau Dashboard",
+  "name": "Create a dashboard with Hubeau API",
   "icons": [
     {
       "src": "favicon.ico",
