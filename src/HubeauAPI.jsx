@@ -8,12 +8,13 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import React from "react";
+import Filter from "./Filter";
 
 export default function HubeauAPI() {
   const [columnFilters, setColumnFilters] = React.useState([]);
 
-  // call de l'API Hubeau
-  const { isPending, error, data } = useQuery({
+  // Call de l'API Hubeau
+  const { isPending, error, data, refetch } = useQuery({
     queryKey: ["stationsHubeau"],
     queryFn: () =>
       fetch("https://hubeau.eaufrance.fr/api/v1/temperature/station").then(
@@ -23,51 +24,54 @@ export default function HubeauAPI() {
 
   const stations = data?.data ?? [];
 
+  // Définition des colonnes
   const columns = React.useMemo(
     () => [
       {
         accessorKey: "code_station",
         header: "Code de la station",
-        cell: (info) => info.getValue(),
       },
       {
-        accessorKey: "libelle_cours_eau",
+        accessorFn: (row) => row.libelle_cours_eau || "N/A", // Permet d'afficher N/A si pas de libellé et de prendre en compte N/A quand on filtre
+        id: "libelle_cours_eau",
         header: "Cours d'eau",
         filterFn: "includesString",
-        cell: (info) => info.getValue() || "N/A",
       },
       {
         accessorKey: "libelle_commune",
         header: "Commune",
-        cell: (info) => info.getValue(),
       },
       {
         accessorKey: "libelle_region",
         header: "Région",
-        cell: (info) => info.getValue(),
       },
     ],
     []
   );
 
+  // Pagination manuelle
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
     pageSize: 15,
   });
 
+  // État pour afficher le numéro de page dans le champ input
   const [inputPage, setInputPage] = React.useState(pagination.pageIndex + 1);
 
+  // Met à jour l'affichage du champ de page à chaque changement de pageIndex
   React.useEffect(() => {
     setInputPage(pagination.pageIndex + 1);
   }, [pagination.pageIndex]);
 
+  // Init Tab avec Tanstack Table
   const table = useReactTable({
     data: stations,
     columns,
-    filterFns: {},
     state: {
+      columnFilters,
       pagination,
     },
+    onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(), //client side filtering
     getPaginationRowModel: getPaginationRowModel(),
@@ -75,6 +79,16 @@ export default function HubeauAPI() {
     debugHeaders: true,
     debugColumns: false,
   });
+
+  // Si la page courante dépasse le nombre total de pages, on remet à la dernière page possible (permet d'éviter page 1 sur 0)
+  React.useEffect(() => {
+    if (pagination.pageIndex >= table.getPageCount()) {
+      setPagination((old) => ({
+        ...old,
+        pageIndex: Math.max(table.getPageCount() - 1, 0),
+      }));
+    }
+  }, [table.getPageCount(), pagination.pageIndex]);
 
   if (isPending) return <p>Chargement...</p>;
   if (error) return <p>Une erreur est survenue : {error.message}</p>;
@@ -87,6 +101,8 @@ export default function HubeauAPI() {
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
                 <th key={header.id} colSpan={header.colSpan}>
+                  
+                  {/* Affichage du nom des colonnes */}
                   {header.isPlaceholder ? null : (
                     <>
                       <div>
@@ -95,6 +111,19 @@ export default function HubeauAPI() {
                           header.getContext()
                         )}
                       </div>
+
+                      {/* Affichage du filtre s'il est activé sur la colonne */}
+                      {header.column.getCanFilter() ? (
+                        <div
+                          className="search"
+                          onKeyPress={() => {
+                            if (table.getPageCount() > 1)
+                              setPagination((old) => ({ ...old, pageIndex: 0, })); // toujours afficher la première page quand on filtre
+                          }}
+                        >
+                          <Filter column={header.column} />
+                        </div>
+                      ) : null}
                     </>
                   )}
                 </th>
@@ -103,6 +132,7 @@ export default function HubeauAPI() {
           ))}
         </thead>
         <tbody>
+          {/* Affichage des datas dans les lignes du tab */}
           {table.getRowModel().rows.map((row) => (
             <tr key={row.id}>
               {row.getVisibleCells().map((cell) => (
@@ -116,6 +146,7 @@ export default function HubeauAPI() {
       </table>
 
       <div className="h-2" />
+      {/* Système de pagination */}
       <div className="flex items-center gap-2">
         <button
           onClick={() => setPagination((old) => ({ ...old, pageIndex: 0 }))}
@@ -159,21 +190,29 @@ export default function HubeauAPI() {
         >
           {">>"}
         </button>
+
+        {/* Affichage de la page actuelle et du nombre total de pages */}
         <span className="flex items-center gap-1">
           <div>
             Page{" "}
             <strong>
-              {table.getState().pagination.pageIndex + 1} of{" "}
-              {table.getPageCount()}
+              {table.getPageCount() === 0 ? 0 : table.getState().pagination.pageIndex + 1} {" "}
+              of {table.getPageCount()}
             </strong>
           </div>
         </span>
+
+        {/* Input pour choisir la page où on veut aller */}
         <span className="flex items-center gap-1">
           | Go to page:
           <input
             min="1"
             max={table.getPageCount()}
-            value={inputPage}
+            value={
+              table.getPageCount() === 0
+                ? 0
+                : table.getState().pagination.pageIndex + 1
+            }
             onKeyPress={(event) => {
               if (!/[0-9]/.test(event.key)) {
                 event.preventDefault();
@@ -189,12 +228,9 @@ export default function HubeauAPI() {
                 return;
               }
 
-              // Vérifie si le nombre est valide et >= 1
+              // Vérifie que la page entrée est OK avant de changer la pagination
               const num = Number(value);
-              if (
-                num >= 1 &&
-                num < table.getPageCount() + 1
-              ) {
+              if (num >= 1 && num < table.getPageCount() + 1) {
                 setInputPage(value);
 
                 const page = num - 1;
@@ -204,7 +240,7 @@ export default function HubeauAPI() {
               }
             }}
             onBlur={() => {
-              // Remet la bonne page si invalide ou vide
+              // Si l'utilisateur quitte le champ sans valeur valide, on remet la page actuelle
               if (
                 inputPage === "" ||
                 Number(inputPage) < 1 ||
@@ -217,6 +253,7 @@ export default function HubeauAPI() {
           />
         </span>
       </div>
+      {/* Affichage du nombre total de stations récupérées*/}
       <div>{table.getPrePaginationRowModel().rows.length} Stations</div>
     </div>
   );
