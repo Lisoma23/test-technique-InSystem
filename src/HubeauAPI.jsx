@@ -1,4 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
+import {
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import React from "react";
 
 export default function HubeauAPI() {
 
@@ -11,16 +18,85 @@ export default function HubeauAPI() {
       ),
   });
 
-  if (isPending) return "Loading...";
+  const stations = data?.data ?? [];
 
-  if (error) return "An error has occurred: " + error.message;
-  console.log(data);
+  const columns = React.useMemo(
+    () => [
+      {
+        accessorKey: "code_station",
+        header: "Code de la station",
+        cell: (info) => info.getValue(),
+      },
+      {
+        accessorKey: "libelle_cours_eau",
+        header: "Cours d'eau",
+        filterFn: "includesString",
+        cell: (info) => info.getValue() || "N/A",
+      },
+      {
+        accessorKey: "libelle_commune",
+        header: "Commune",
+        cell: (info) => info.getValue(),
+      },
+      {
+        accessorKey: "libelle_region",
+        header: "Région",
+        cell: (info) => info.getValue(),
+      },
+    ],
+    []
+  );
+
+
+  const table = useReactTable({
+    data: stations,
+    columns,
+    filterFns: {},
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(), //client side filtering
+    debugTable: true,
+    debugHeaders: true,
+    debugColumns: false,
+  });
+
+  if (isPending) return <p>Chargement...</p>;
+  if (error) return <p>Une erreur est survenue : {error.message}</p>;
 
   return (
-    <div>
-      {data.data.map((cours) => (
-        <li>{cours.libelle_cours_eau ?? `N/A`}</li> // récupère le nom des cours d'eau et si ils n'existent pas met N/A
-      ))}
+    <div className="p-2">
+      <table>
+        <thead>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <tr key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <th key={header.id} colSpan={header.colSpan}>
+                  {header.isPlaceholder ? null : (
+                    <>
+                      <div>
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                      </div>
+                    </>
+                  )}
+                </th>
+              ))}
+            </tr>
+          ))}
+        </thead>
+        <tbody>
+          {table.getRowModel().rows.map((row) => (
+            <tr key={row.id}>
+              {row.getVisibleCells().map((cell) => (
+                <td key={cell.id}>
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
