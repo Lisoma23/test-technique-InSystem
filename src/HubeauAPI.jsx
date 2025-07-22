@@ -4,13 +4,12 @@ import {
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
-  getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 import React from "react";
 import Filter from "./Filter";
 
-export default function HubeauAPI() {
+export default function HubeauAPI({sendCodeStation}) {
   const [columnFilters, setColumnFilters] = React.useState([]);
 
   // Call de l'API Hubeau
@@ -134,7 +133,9 @@ export default function HubeauAPI() {
         <tbody>
           {/* Affichage des datas dans les lignes du tab */}
           {table.getRowModel().rows.map((row) => (
-            <tr key={row.id}>
+            <tr key={row.id}  onClick={ () => 
+              sendCodeStation(row.original.code_station)
+            }>
               {row.getVisibleCells().map((cell) => (
                 <td key={cell.id}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -208,11 +209,7 @@ export default function HubeauAPI() {
           <input
             min="1"
             max={table.getPageCount()}
-            value={
-              table.getPageCount() === 0
-                ? 0
-                : table.getState().pagination.pageIndex + 1
-            }
+            value={inputPage}
             onKeyPress={(event) => {
               if (!/[0-9]/.test(event.key)) {
                 event.preventDefault();
