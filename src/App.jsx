@@ -5,14 +5,16 @@ import { useState } from "react";
 
 export default function App() {
   const [codeStation, setCodeStation] = useState("");
-
-  console.log(codeStation + "station clic")
+  const [regionStation, setRegionStation] = useState("");
 
   return (
     <div className="App">
       <header className="App-header">
-        <API sendCodeStation={setCodeStation} />
-        <GraphEtData station={codeStation} />
+        <API
+          sendCodeStation={setCodeStation}
+          sendRegionStation={setRegionStation}
+        />
+        <GraphEtData station={codeStation} region={regionStation} />
       </header>
     </div>
   );

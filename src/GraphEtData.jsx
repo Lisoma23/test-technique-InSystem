@@ -3,8 +3,7 @@ import { LineChart } from "@mui/x-charts/LineChart";
 
 import React from "react";
 
-export default function GraphEtData({ station }) {
-  console.log(station);
+export default function GraphEtData({ station, region }) {
   // Call de l'API Hubeau
   const { isPending, error, data } = useQuery({
     queryKey: ["tempsStation", station], // La requête est refaite seulement si station change, car la queryKey change (pas la même donnée en cache)
@@ -88,6 +87,7 @@ export default function GraphEtData({ station }) {
       <ul>
         <li>Code commune : {data?.derniereMesure.code_commune}</li>
         <li>Commune : {data?.derniereMesure.libelle_commune}</li>
+        <li>Région : {region}</li>
         <li>Cours d'eau : {data?.derniereMesure.libelle_cours_eau ?? "N/A"}</li>
       </ul>
       <div className="chart-wrapper">

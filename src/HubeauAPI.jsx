@@ -9,11 +9,11 @@ import {
 import React from "react";
 import Filter from "./Filter";
 
-export default function HubeauAPI({sendCodeStation}) {
+export default function HubeauAPI({ sendCodeStation, sendRegionStation }) {
   const [columnFilters, setColumnFilters] = React.useState([]);
 
   // Call de l'API Hubeau
-  const { isPending, error, data, refetch } = useQuery({
+  const { isPending, error, data } = useQuery({
     queryKey: ["stationsHubeau"],
     queryFn: () =>
       fetch("https://hubeau.eaufrance.fr/api/v1/temperature/station").then(
@@ -100,7 +100,6 @@ export default function HubeauAPI({sendCodeStation}) {
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
                 <th key={header.id} colSpan={header.colSpan}>
-                  
                   {/* Affichage du nom des colonnes */}
                   {header.isPlaceholder ? null : (
                     <>
@@ -117,7 +116,10 @@ export default function HubeauAPI({sendCodeStation}) {
                           className="search"
                           onKeyPress={() => {
                             if (table.getPageCount() > 1)
-                              setPagination((old) => ({ ...old, pageIndex: 0, })); // toujours afficher la première page quand on filtre
+                              setPagination((old) => ({
+                                ...old,
+                                pageIndex: 0,
+                              })); // Toujours afficher la première page quand on filtre
                           }}
                         >
                           <Filter column={header.column} />
@@ -133,9 +135,14 @@ export default function HubeauAPI({sendCodeStation}) {
         <tbody>
           {/* Affichage des datas dans les lignes du tab */}
           {table.getRowModel().rows.map((row) => (
-            <tr key={row.id}  onClick={ () => 
-              sendCodeStation(row.original.code_station)
-            }>
+            <tr
+              key={row.id}
+              onClick={() => {
+                // Envoie le code et la région de la station lorsqu'une ligne est cliquée
+                sendCodeStation(row.original.code_station);
+                sendRegionStation(row.original.libelle_region);
+              }}
+            >
               {row.getVisibleCells().map((cell) => (
                 <td key={cell.id}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -197,7 +204,9 @@ export default function HubeauAPI({sendCodeStation}) {
           <div>
             Page{" "}
             <strong>
-              {table.getPageCount() === 0 ? 0 : table.getState().pagination.pageIndex + 1} {" "}
+              {table.getPageCount() === 0
+                ? 0
+                : table.getState().pagination.pageIndex + 1}{" "}
               of {table.getPageCount()}
             </strong>
           </div>
