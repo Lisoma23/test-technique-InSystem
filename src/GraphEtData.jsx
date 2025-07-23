@@ -1,4 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
+import { LineChart } from "@mui/x-charts/LineChart";
+
 import React from "react";
 
 export default function GraphEtData({ station }) {
@@ -54,19 +56,61 @@ export default function GraphEtData({ station }) {
   if (isPending) return <p>Chargement...</p>;
   if (error) return <p>Une erreur est survenue : {error.message}</p>;
 
+  // Trie des dates dans le bon ordre
+  const sortedHistoriques = [...data.historiques].sort(
+    (a, b) => new Date(a.date) - new Date(b.date)
+  );
+
+  // On génère les labels du graphique à partir des dates triées + ajout de la mesure la plsu récente (call mesure1)
+  const xLabels = [
+    ...sortedHistoriques.map((item) =>
+      new Date(item.date).toLocaleDateString("fr-FR", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      })
+    ),
+    new Date(data.derniereMesure.date_mesure_temp).toLocaleDateString("fr-FR", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    }),
+  ];
+
+  // On génère les températures dans le même ordre que les dates
+  const yData = [
+    ...sortedHistoriques.map((item) => item.temperature ?? null),
+    data.derniereMesure.resultat,
+  ];
+
   return (
     <div>
-      {data?.derniereMesure.date_mesure_temp} :{" "}
-      {data?.derniereMesure.resultat || "Aucune donnée"}
-      {data?.derniereMesure.resultat ? data?.derniereMesure.symbole_unite : ""}
       <ul>
-        {data.historiques.map((item) => (
-          <li key={item.date}>
-            {item.date} : {item.temperature ?? "Pas de donnée"}
-            {item.temperature ? data?.derniereMesure.symbole_unite : ""}
-          </li>
-        ))}
+        <li>Code commune : {data?.derniereMesure.code_commune}</li>
+        <li>Commune : {data?.derniereMesure.libelle_commune}</li>
+        <li>Cours d'eau : {data?.derniereMesure.libelle_cours_eau ?? "N/A"}</li>
       </ul>
+      <div className="chart-wrapper">
+        {/* Création d'un graphique pour afficher l'évolution de la température d'un cours d'eau sélectionné */}
+        <LineChart
+          xAxis={[
+            {
+              scaleType: "point",
+              data: xLabels,
+            },
+          ]}
+          yAxis={[{ min: 0, max: 30 }]}
+          series={[
+            {
+              type: "line",
+              label: "Température (en °C)",
+              data: yData,
+            },
+          ]}
+          height={300}
+          width={400}
+        />
+      </div>
     </div>
   );
 }
