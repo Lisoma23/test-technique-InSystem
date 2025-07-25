@@ -1,5 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { LineChart } from "@mui/x-charts/LineChart";
+import { ChartsText } from "@mui/x-charts/ChartsText";
+import { GlobalStyles } from "@mui/material";
+
 import React from "react";
 
 export default function GraphEtData({ station, region }) {
@@ -102,13 +105,20 @@ export default function GraphEtData({ station, region }) {
       </ul>
       <div className="chart-wrapper w-[90vw]">
         {/* Création d'un graphique pour afficher l'évolution de la température d'un cours d'eau sélectionné */}
-        <LineChart
-          xAxis={[
-            {
-              scaleType: "point",
-              data: xLabels,
+        <GlobalStyles
+          styles={{
+            ".MuiChartsAxis-tickLabel": {
+              fontSize: "2.8vw !important",
+              fill: "#ABC4FF !important",
             },
-          ]}
+            ".MuiChartsAxis-legendLabel": {
+              fontSize: "2.5vw !important",
+            },
+          }}
+        />
+
+        <LineChart
+          xAxis={[{ scaleType: "point", data: xLabels }]}
           yAxis={[{ min: 0, max: 30 }]}
           series={[
             {
@@ -119,7 +129,6 @@ export default function GraphEtData({ station, region }) {
             },
           ]}
           height={300}
-          width={325}
         />
       </div>
     </div>

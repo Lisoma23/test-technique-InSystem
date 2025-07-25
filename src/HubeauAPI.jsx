@@ -97,7 +97,7 @@ export default function HubeauAPI({ sendCodeStation, sendRegionStation }) {
       <h1 className="sm:text-[1.3vw] border-y-1 py-2 mb-5 text-center font-medium">
         Liste des cours d'eau
       </h1>
-      <table className="w-full table-auto table-fixed">
+      <table className="w-full table-fixed">
         <colgroup>
           <col className="w-[13vw]" />
           <col className="w-[15vw]" />
