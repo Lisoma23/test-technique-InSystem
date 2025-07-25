@@ -28,7 +28,7 @@ export default function HubeauAPI({ sendCodeStation, sendRegionStation }) {
     () => [
       {
         accessorKey: "code_station",
-        header: "Code de la station",
+        header: "N° station",
       },
       {
         accessorFn: (row) => row.libelle_cours_eau || "N/A", // Permet d'afficher N/A si pas de libellé et de prendre en compte N/A quand on filtre
@@ -93,13 +93,26 @@ export default function HubeauAPI({ sendCodeStation, sendRegionStation }) {
   if (error) return <p>Une erreur est survenue : {error.message}</p>;
 
   return (
-    <div className="p-2">
-      <table>
-        <thead>
+    <div className="overflow-x-auto">
+      <h1 className="sm:text-[1.3vw] border-y-1 py-2 mb-5 text-center font-medium">
+        Liste des cours d'eau
+      </h1>
+      <table className="w-full table-auto table-fixed">
+        <colgroup>
+          <col className="w-[13vw]" />
+          <col className="w-[15vw]" />
+          <col className="w-[18vw]" />
+          <col className="w-[18vw]" />
+        </colgroup>
+        <thead className="border-b-1">
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <th key={header.id} colSpan={header.colSpan}>
+                <th
+                  key={header.id}
+                  colSpan={header.colSpan}
+                  className="py-2 px-[2vw] text-[2.5vw]"
+                >
                   {/* Affichage du nom des colonnes */}
                   {header.isPlaceholder ? null : (
                     <>
@@ -132,7 +145,7 @@ export default function HubeauAPI({ sendCodeStation, sendRegionStation }) {
             </tr>
           ))}
         </thead>
-        <tbody>
+        <tbody className="text-[2.4vw] text-center">
           {/* Affichage des datas dans les lignes du tab */}
           {table.getRowModel().rows.map((row) => (
             <tr
@@ -144,7 +157,7 @@ export default function HubeauAPI({ sendCodeStation, sendRegionStation }) {
               }}
             >
               {row.getVisibleCells().map((cell) => (
-                <td key={cell.id}>
+                <td key={cell.id} className="border-b-1 py-1 px-0.5">
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}
@@ -155,7 +168,7 @@ export default function HubeauAPI({ sendCodeStation, sendRegionStation }) {
 
       <div className="h-2" />
       {/* Système de pagination */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 text-[2.8vw]">
         <button
           onClick={() => setPagination((old) => ({ ...old, pageIndex: 0 }))}
           disabled={!table.getCanPreviousPage()}
@@ -260,7 +273,10 @@ export default function HubeauAPI({ sendCodeStation, sendRegionStation }) {
         </span>
       </div>
       {/* Affichage du nombre total de stations récupérées*/}
-      <div>{table.getPrePaginationRowModel().rows.length} Stations</div>
+      <div className="text-[2.5vw]">
+        {table.getPrePaginationRowModel().rows.length} Station(s)
+      </div>
+      <hr className="my-5 w-1/2 ml-[22.5vw]" />
     </div>
   );
 }

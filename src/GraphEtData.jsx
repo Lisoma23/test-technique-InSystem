@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { LineChart } from "@mui/x-charts/LineChart";
-
 import React from "react";
 
 export default function GraphEtData({ station, region }) {
@@ -52,8 +51,11 @@ export default function GraphEtData({ station, region }) {
     },
   });
 
-  if (isPending) return <p>Chargement...</p>;
-  if (error) return <p>Une erreur est survenue : {error.message}</p>;
+  if (isPending) return <p className="text-[2.5vw]">Chargement...</p>;
+  if (error)
+    return (
+      <p className="text-[2.5vw]">Une erreur est survenue : {error.message}</p>
+    );
 
   // Trie des dates dans le bon ordre
   const sortedHistoriques = [...data.historiques].sort(
@@ -65,13 +67,13 @@ export default function GraphEtData({ station, region }) {
     ...sortedHistoriques.map((item) =>
       new Date(item.date).toLocaleDateString("fr-FR", {
         day: "2-digit",
-        month: "short",
+        month: "2-digit",
         year: "numeric",
       })
     ),
     new Date(data.derniereMesure.date_mesure_temp).toLocaleDateString("fr-FR", {
       day: "2-digit",
-      month: "short",
+      month: "2-digit",
       year: "numeric",
     }),
   ];
@@ -83,14 +85,22 @@ export default function GraphEtData({ station, region }) {
   ];
 
   return (
-    <div>
-      <ul>
-        <li>Code commune : {data?.derniereMesure.code_commune}</li>
-        <li>Commune : {data?.derniereMesure.libelle_commune}</li>
-        <li>Région : {region}</li>
-        <li>Cours d'eau : {data?.derniereMesure.libelle_cours_eau ?? "N/A"}</li>
+    <div className="mb-1.5">
+      <h1 className="text-[4vw] font-medium">
+        {" "}
+        {data?.derniereMesure.libelle_cours_eau ?? "N/A"}
+      </h1>
+      <ul className="text-[3vw] flex justify-between w-full max-w-[90vw] my-[5vw] items-center">
+        <div className="flex flex-col gap-1 w-[42vw]">
+          <li>Code commune : {data?.derniereMesure.code_commune}</li>
+          <li>Commune : {data?.derniereMesure.libelle_commune}</li>
+        </div>
+        <div className="flex flex-col gap-1 w-[42vw] text-left break-words">
+          <li>Code station : {data?.derniereMesure.code_station ?? "N/A"}</li>
+          <li>Région : {region}</li>
+        </div>
       </ul>
-      <div className="chart-wrapper">
+      <div className="chart-wrapper w-[90vw]">
         {/* Création d'un graphique pour afficher l'évolution de la température d'un cours d'eau sélectionné */}
         <LineChart
           xAxis={[
@@ -105,10 +115,11 @@ export default function GraphEtData({ station, region }) {
               type: "line",
               label: "Température (en °C)",
               data: yData,
+              color: "#ABC4FF",
             },
           ]}
           height={300}
-          width={400}
+          width={325}
         />
       </div>
     </div>

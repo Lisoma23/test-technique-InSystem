@@ -4,7 +4,7 @@ import GraphEtData from "./GraphEtData";
 import { useState, useEffect } from "react";
 
 export default function App() {
-    // Initialiser les valeurs depuis localStorage si présentes
+  // Initialiser les valeurs depuis localStorage si présentes
   const [codeStation, setCodeStation] = useState(() => {
     return localStorage.getItem("codeStation") || "";
   });
@@ -26,8 +26,8 @@ export default function App() {
   }, [regionStation]);
 
   return (
-    <div className="App">
-      <header className="App-header">
+    <div className="App bg-white m-3 rounded-lg ">
+      <header className="App-header w-full max-w-[90vw] mx-auto pt-4">
         <API
           sendCodeStation={setCodeStation}
           sendRegionStation={setRegionStation}
