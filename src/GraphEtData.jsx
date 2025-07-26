@@ -1,9 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { LineChart } from "@mui/x-charts/LineChart";
-import { ChartsText } from "@mui/x-charts/ChartsText";
 import { GlobalStyles } from "@mui/material";
-
-import React from "react";
 
 export default function GraphEtData({ station, region }) {
   // Call de l'API Hubeau
@@ -44,17 +41,22 @@ export default function GraphEtData({ station, region }) {
       console.log(mesuresDerniersJ);
 
       // On return l'antiereté des datas de la première mesure et la température des 3 derniers mois + leur date
+
       return {
         derniereMesure: mesure1,
-        historiques: mesuresDerniersJ.map((r, i) => ({
-          date: dates[i],
-          temperature: r.data[0]?.resultat || null,
-        })),
+        historiques: mesuresDerniersJ.map((r, i) => {
+          console.log(r);
+          return {
+            date: dates[i],
+            temperature: r.data[0]?.resultat || null,
+          };
+        }),
       };
     },
   });
 
-  if (isPending) return <p className="text-[2.5vw]">Chargement...</p>;
+  if (isPending)
+    return <p className="text-[2.5vw] md:text-[2vw]">Chargement...</p>;
   if (error)
     return (
       <p className="text-[2.5vw]">Une erreur est survenue : {error.message}</p>
@@ -89,11 +91,11 @@ export default function GraphEtData({ station, region }) {
 
   return (
     <div className="mb-1.5">
-      <h1 className="text-[4vw] font-medium">
+      <h1 className="text-[4vw] font-medium md:text-[3vw]">
         {" "}
         {data?.derniereMesure.libelle_cours_eau ?? "N/A"}
       </h1>
-      <ul className="text-[3vw] flex justify-between w-full max-w-[90vw] my-[5vw] items-center">
+      <ul className="text-[3vw] flex justify-between w-full max-w-[90vw] my-[5vw] items-center md:text-[2.5vw] mt-[2vw]">
         <div className="flex flex-col gap-1 w-[42vw]">
           <li>Code commune : {data?.derniereMesure.code_commune}</li>
           <li>Commune : {data?.derniereMesure.libelle_commune}</li>
@@ -103,15 +105,13 @@ export default function GraphEtData({ station, region }) {
           <li>Région : {region}</li>
         </div>
       </ul>
-      <div className="chart-wrapper w-[90vw]">
+      <div className="w-[90vw] h-[30vh] md:h-[56vw] pb-[2vw] chart-wrapper">
         {/* Création d'un graphique pour afficher l'évolution de la température d'un cours d'eau sélectionné */}
+
         <GlobalStyles
           styles={{
             ".MuiChartsAxis-tickLabel": {
-              fontSize: "2.8vw !important",
               fill: "#ABC4FF !important",
-            },
-            ".MuiChartsAxis-legendLabel": {
               fontSize: "2.5vw !important",
             },
           }}
@@ -128,7 +128,6 @@ export default function GraphEtData({ station, region }) {
               color: "#ABC4FF",
             },
           ]}
-          height={300}
         />
       </div>
     </div>

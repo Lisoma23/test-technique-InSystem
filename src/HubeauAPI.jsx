@@ -94,7 +94,7 @@ export default function HubeauAPI({ sendCodeStation, sendRegionStation }) {
 
   return (
     <div className="overflow-x-auto">
-      <h1 className="sm:text-[1.3vw] border-y-1 py-2 mb-5 text-center font-medium">
+      <h1 className="text-[3.3vw] border-y-1 py-2 mb-5 text-center font-medium md:text-[3vw]">
         Liste des cours d'eau
       </h1>
       <table className="w-full table-fixed">
@@ -166,9 +166,9 @@ export default function HubeauAPI({ sendCodeStation, sendRegionStation }) {
         </tbody>
       </table>
 
-      <div className="h-2" />
+      <div className="h-2 md:mt-[2vh]" />
       {/* Système de pagination */}
-      <div className="flex items-center gap-2 text-[2.8vw]">
+      <div className="flex items-center gap-2 text-[2.8vw] md:text-[2.2vw]">
         <button
           onClick={() => setPagination((old) => ({ ...old, pageIndex: 0 }))}
           disabled={!table.getCanPreviousPage()}
@@ -273,10 +273,10 @@ export default function HubeauAPI({ sendCodeStation, sendRegionStation }) {
         </span>
       </div>
       {/* Affichage du nombre total de stations récupérées*/}
-      <div className="text-[2.5vw]">
+      <div className="text-[2.5vw] md:mt-[2vw]">
         {table.getPrePaginationRowModel().rows.length} Station(s)
       </div>
-      <hr className="my-5 w-1/2 ml-[22.5vw]" />
+      <hr className="my-5 md:my-6 w-1/2 ml-[22.5vw] bg-gray-400 md:h-0.5" />
     </div>
   );
 }
