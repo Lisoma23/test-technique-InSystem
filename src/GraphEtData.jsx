@@ -1,8 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { LineChart } from "@mui/x-charts/LineChart";
-import { GlobalStyles } from "@mui/material";
+import { GlobalStyles, useTheme } from "@mui/material";
 
 export default function GraphEtData({ station, region }) {
+  const theme = useTheme();
+
   // Call de l'API Hubeau
   const { isPending, error, data } = useQuery({
     queryKey: ["tempsStation", station], // La requête est refaite seulement si station change, car la queryKey change (pas la même donnée en cache)
@@ -56,10 +58,16 @@ export default function GraphEtData({ station, region }) {
   });
 
   if (isPending)
-    return <p className="text-[2.5vw] md:text-[2vw]">Chargement...</p>;
+    return (
+      <p className="text-[2.5vw] md:text-[2vw] lg:text-[1.3vw] lg:w-[26vw]">
+        Chargement...
+      </p>
+    );
   if (error)
     return (
-      <p className="text-[2.5vw]">Une erreur est survenue : {error.message}</p>
+      <p className="text-[2.5vw] lg:text-[1.3vw] lg:w-[26vw]">
+        Une erreur est survenue : {error.message}
+      </p>
     );
 
   // Trie des dates dans le bon ordre
@@ -90,22 +98,47 @@ export default function GraphEtData({ station, region }) {
   ];
 
   return (
-    <div className="mb-1.5">
-      <h1 className="text-[4vw] font-medium md:text-[3vw]">
+    <div className="mb-1.5 lg:w-[28vw] lg:border-l-1 lg:pl-[2vw]">
+      <h1 className="text-[4vw] font-medium md:text-[3vw] lg:text-[1.5vw]">
         {" "}
         {data?.derniereMesure.libelle_cours_eau ?? "N/A"}
       </h1>
-      <ul className="text-[3vw] flex justify-between w-full max-w-[90vw] my-[5vw] items-center md:text-[2.5vw] mt-[2vw]">
-        <div className="flex flex-col gap-1 w-[42vw]">
-          <li>Code commune : {data?.derniereMesure.code_commune}</li>
-          <li>Commune : {data?.derniereMesure.libelle_commune}</li>
+      <ul className="text-[3vw] flex justify-between w-full max-w-[90vw] my-[5vw] items-center md:text-[2.5vw] mt-[2vw] lg:text-[1.2vw] lg:flex-col lg:items-baseline lg:my-3 lg:w-[26vw]">
+        <div className="flex flex-col gap-1 w-[42vw] lg:w-[26vw]">
+          <li className="lg:flex lg:flex-col lg:mb-2">
+            {" "}
+            <span className="lg:text[10vw]">
+              Code commune <span className="lg:invisible">:</span>{" "}
+            </span>
+            {data?.derniereMesure.code_commune}
+          </li>
+          <li className="lg:flex lg:flex-col lg:mb-2">
+            {" "}
+            <span>
+              Commune <span className="lg:invisible">:</span>{" "}
+            </span>
+            {data?.derniereMesure.libelle_commune}
+          </li>
         </div>
-        <div className="flex flex-col gap-1 w-[42vw] text-left break-words">
-          <li>Code station : {data?.derniereMesure.code_station ?? "N/A"}</li>
-          <li>Région : {region}</li>
+        <div className="flex flex-col gap-1 w-[42vw] text-left break-words lg:w-[26vw]">
+          <li className="lg:flex lg:flex-col lg:mb-2">
+            <span>
+              Code station <span className="lg:invisible">:</span>{" "}
+            </span>
+            {data?.derniereMesure.code_station ?? "N/A"}
+          </li>
+          <li className="lg:flex lg:flex-col lg:mb-2">
+            <span>
+              Région <span className="lg:invisible">:</span>{" "}
+            </span>
+            {region}
+          </li>
         </div>
       </ul>
-      <div className="w-[90vw] h-[30vh] md:h-[56vw] pb-[2vw] chart-wrapper">
+      <h4 className="mb-5 text-[3.5vw] font-medium md:text-[2.8vw] md:mb-7 lg:text-[1.3vw]">
+        Evolution des températures
+      </h4>
+      <div className="w-[90vw] h-[30vh] md:h-[40vh] pb-[2vw] chart-wrapper lg:w-[26vw] lg:h-[41vh]">
         {/* Création d'un graphique pour afficher l'évolution de la température d'un cours d'eau sélectionné */}
 
         <GlobalStyles
@@ -113,6 +146,9 @@ export default function GraphEtData({ station, region }) {
             ".MuiChartsAxis-tickLabel": {
               fill: "#ABC4FF !important",
               fontSize: "2.5vw !important",
+              [theme.breakpoints.up("lg")]: {
+                fontSize: "1vw !important",
+              },
             },
           }}
         />

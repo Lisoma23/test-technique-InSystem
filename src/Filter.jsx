@@ -5,7 +5,7 @@ export default function Filter({ column }) {
 
   return (
     <DebouncedInput
-      className="border shadow rounded text-[1.8vw] text-center w-full"
+      className="border shadow rounded text-[1.8vw] text-center w-full lg:text-[1vw]"
       onChange={(value) => column.setFilterValue(value)}
       placeholder="Search..."
       type="text"

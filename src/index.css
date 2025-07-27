@@ -28,3 +28,9 @@ code {
     font-size: 2.3vw;
   }
 }
+
+@media (min-width: 1024px) {
+  .MuiChartsLegend-series span {
+    font-size: 1.1vw;
+  }
+}

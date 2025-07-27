@@ -27,7 +27,7 @@ export default function App() {
 
   return (
     <div className="App bg-white m-3 rounded-lg ">
-      <header className="App-header w-full max-w-[90vw] mx-auto pt-4">
+      <header className="App-header w-full max-w-[90vw] mx-auto pt-4 lg:flex lg:w-95vw lg:max-w-[95vw] lg:justify-between">
         <API
           sendCodeStation={setCodeStation}
           sendRegionStation={setRegionStation}

@@ -48,11 +48,23 @@ export default function HubeauAPI({ sendCodeStation, sendRegionStation }) {
     []
   );
 
-  // Pagination manuelle
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
-    pageSize: 15,
+    pageSize: 15, // valeur par défaut
   });
+
+  React.useEffect(() => {
+    const handleResize = () => {
+      const newPageSize = window.innerWidth >= 1024 ? 10 : 15;
+      setPagination((prev) => ({ ...prev, pageSize: newPageSize }));
+    };
+
+    // Initial check
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // État pour afficher le numéro de page dans le champ input
   const [inputPage, setInputPage] = React.useState(pagination.pageIndex + 1);
@@ -89,20 +101,30 @@ export default function HubeauAPI({ sendCodeStation, sendRegionStation }) {
     }
   }, [table.getPageCount(), pagination.pageIndex]);
 
-  if (isPending) return <p>Chargement...</p>;
-  if (error) return <p>Une erreur est survenue : {error.message}</p>;
+  if (isPending)
+    return (
+      <p className="text-[2.5vw] md:text-[2vw] lg:text-[1.3vw] lg:w-[36vw]">
+        Chargement...
+      </p>
+    );
+  if (error)
+    return (
+      <p className="text-[2.5vw] lg:text-[1.3vw ]">
+        Une erreur est survenue : {error.message}
+      </p>
+    );
 
   return (
-    <div className="overflow-x-auto">
-      <h1 className="text-[3.3vw] border-y-1 py-2 mb-5 text-center font-medium md:text-[3vw]">
+    <div className="overflow-x-auto lg:w-[65vw] lg:flex lg:items-center lg:flex-col">
+      <h1 className="text-[3.3vw] border-y-1 py-2 mb-5 text-center font-medium md:text-[3vw] lg:text-[2vw] lg:w-[65vw]">
         Liste des cours d'eau
       </h1>
       <table className="w-full table-fixed">
         <colgroup>
-          <col className="w-[13vw]" />
-          <col className="w-[15vw]" />
-          <col className="w-[18vw]" />
-          <col className="w-[18vw]" />
+          <col className="w-[13vw] lg:w-[11vw]" />
+          <col className="w-[15vw] lg:w-[13vw]" />
+          <col className="w-[18vw] lg:w-[15vw]" />
+          <col className="w-[18vw] lg:w-[15vw]" />
         </colgroup>
         <thead className="border-b-1">
           {table.getHeaderGroups().map((headerGroup) => (
@@ -111,7 +133,7 @@ export default function HubeauAPI({ sendCodeStation, sendRegionStation }) {
                 <th
                   key={header.id}
                   colSpan={header.colSpan}
-                  className="py-2 px-[2vw] text-[2.5vw]"
+                  className="py-2 px-[2vw] text-[2.5vw] lg:text-[1.3vw] lg:px-[1vw]"
                 >
                   {/* Affichage du nom des colonnes */}
                   {header.isPlaceholder ? null : (
@@ -145,7 +167,7 @@ export default function HubeauAPI({ sendCodeStation, sendRegionStation }) {
             </tr>
           ))}
         </thead>
-        <tbody className="text-[2.4vw] text-center">
+        <tbody className="text-[2.4vw] text-center lg:text-[1.2vw]">
           {/* Affichage des datas dans les lignes du tab */}
           {table.getRowModel().rows.map((row) => (
             <tr
@@ -168,7 +190,7 @@ export default function HubeauAPI({ sendCodeStation, sendRegionStation }) {
 
       <div className="h-2 md:mt-[2vh]" />
       {/* Système de pagination */}
-      <div className="flex items-center gap-2 text-[2.8vw] md:text-[2.2vw]">
+      <div className="flex items-center gap-2 text-[2.8vw] md:text-[2.2vw] lg:text-[1.2vw] l">
         <button
           onClick={() => setPagination((old) => ({ ...old, pageIndex: 0 }))}
           disabled={!table.getCanPreviousPage()}
@@ -273,10 +295,10 @@ export default function HubeauAPI({ sendCodeStation, sendRegionStation }) {
         </span>
       </div>
       {/* Affichage du nombre total de stations récupérées*/}
-      <div className="text-[2.5vw] md:mt-[2vw]">
+      <div className="text-[2.5vw] md:mt-[2vh]  lg:text-[1.3vw] lg:mt-[1vh]">
         {table.getPrePaginationRowModel().rows.length} Station(s)
       </div>
-      <hr className="my-5 md:my-6 w-1/2 ml-[22.5vw] bg-gray-400 md:h-0.5" />
+      <hr className="my-5 md:my-6 w-1/2 ml-[22.5vw] bg-gray-400 md:h-0.5 lg:w-0" />
     </div>
   );
 }
