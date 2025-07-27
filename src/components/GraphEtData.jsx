@@ -50,7 +50,7 @@ export default function GraphEtData({ station, region }) {
           console.log(r);
           return {
             date: dates[i],
-            temperature: r.data[0]?.resultat || null,
+            temperature: r.data?.[0]?.resultat || null,
           };
         }),
       };

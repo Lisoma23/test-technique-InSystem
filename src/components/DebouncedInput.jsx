@@ -18,7 +18,7 @@ export default function DebouncedInput({
     }, debounce);
 
     return () => clearTimeout(timeout);
-  }, [value, onChange, debounce]);
+  }, [value, debounce]);
 
   return (
     <input

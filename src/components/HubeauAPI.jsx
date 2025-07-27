@@ -15,7 +15,7 @@ export default function HubeauAPI({ sendCodeStation, sendRegionStation }) {
   // Call de l'API Hubeau
   const { isPending, error, data } = useQuery({
     queryKey: ["stationsHubeau"],
-    queryFn: () =>
+    queryFn: () => 
       fetch("https://hubeau.eaufrance.fr/api/v1/temperature/station").then(
         (res) => res.json()
       ),
@@ -99,7 +99,7 @@ export default function HubeauAPI({ sendCodeStation, sendRegionStation }) {
         pageIndex: Math.max(table.getPageCount() - 1, 0),
       }));
     }
-  }, [table.getPageCount(), pagination.pageIndex]);
+  }, [pagination.pageIndex]);
 
   if (isPending)
     return (
@@ -296,7 +296,8 @@ export default function HubeauAPI({ sendCodeStation, sendRegionStation }) {
       </div>
       {/* Affichage du nombre total de stations récupérées*/}
       <div className="text-[2.5vw] md:mt-[2vh]  lg:text-[1.3vw] lg:mt-[1vh]">
-        {table.getPrePaginationRowModel().rows.length} Station(s)
+        {table.getPrePaginationRowModel().rows.length} Station
+        {table.getPrePaginationRowModel().rows.length <= 1 ? "" : "s"}
       </div>
       <hr className="my-5 md:my-6 w-1/2 ml-[22.5vw] bg-gray-400 md:h-0.5 lg:w-0" />
     </div>
