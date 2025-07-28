@@ -66,7 +66,7 @@ export default function GraphEtData({ station, region }) {
   if (error)
     return (
       <p className="text-[2.5vw] lg:text-[1.3vw] lg:w-[26vw]">
-        Une erreur est survenue : {error.message}
+        Une erreur est survenue : Veuillez resélectionner un fleuve
       </p>
     );
 
@@ -98,23 +98,20 @@ export default function GraphEtData({ station, region }) {
   ];
 
   return (
-    <div className="mb-1.5 lg:w-[28vw] lg:border-l-1 lg:pl-[2vw]">
+    <div className="mb-1.5 lg:w-[28vw] lg:border-l-1 lg:pl-[2vw] lg:border-accent">
       <h1 className="text-[4vw] font-medium md:text-[3vw] lg:text-[1.5vw]">
-        {" "}
         {data?.derniereMesure.libelle_cours_eau ?? "N/A"}
       </h1>
       <ul className="text-[3vw] flex justify-between w-full max-w-[90vw] my-[5vw] items-center md:text-[2.5vw] mt-[2vw] lg:text-[1.2vw] lg:flex-col lg:items-baseline lg:my-3 lg:w-[26vw]">
         <div className="flex flex-col gap-1 w-[42vw] lg:w-[26vw]">
           <li className="lg:flex lg:flex-col lg:mb-2">
-            {" "}
-            <span className="lg:text[10vw]">
+            <span className="text-accent">
               Code commune <span className="lg:invisible">:</span>{" "}
             </span>
             {data?.derniereMesure.code_commune}
           </li>
           <li className="lg:flex lg:flex-col lg:mb-2">
-            {" "}
-            <span>
+            <span className="text-accent">
               Commune <span className="lg:invisible">:</span>{" "}
             </span>
             {data?.derniereMesure.libelle_commune}
@@ -122,13 +119,13 @@ export default function GraphEtData({ station, region }) {
         </div>
         <div className="flex flex-col gap-1 w-[42vw] text-left break-words lg:w-[26vw]">
           <li className="lg:flex lg:flex-col lg:mb-2">
-            <span>
+            <span className="text-accent">
               Code station <span className="lg:invisible">:</span>{" "}
             </span>
             {data?.derniereMesure.code_station ?? "N/A"}
           </li>
           <li className="lg:flex lg:flex-col lg:mb-2">
-            <span>
+            <span className="text-accent">
               Région <span className="lg:invisible">:</span>{" "}
             </span>
             {region}
@@ -143,6 +140,16 @@ export default function GraphEtData({ station, region }) {
 
         <GlobalStyles
           styles={{
+            ".MuiChartsLegend-series span": {
+              fontSize: "2.8vw !important",
+              [theme.breakpoints.up("md")]: {
+                fontSize: "2.3vw !important",
+              },
+              [theme.breakpoints.up("lg")]: {
+                fontSize: "1.1vw !important",
+              },
+            },
+
             ".MuiChartsAxis-tickLabel": {
               fill: "#ABC4FF !important",
               fontSize: "2.5vw !important",

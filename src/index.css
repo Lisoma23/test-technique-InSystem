@@ -18,19 +18,3 @@ code {
   /*Modifier la div générée automatiquement par LineChart */
   display: block;
 }
-
-.MuiChartsLegend-series span {
-  font-size: 2.8vw;
-}
-
-@media (min-width: 768px) and (max-width: 1023px) {
-  .MuiChartsLegend-series span {
-    font-size: 2.3vw;
-  }
-}
-
-@media (min-width: 1024px) {
-  .MuiChartsLegend-series span {
-    font-size: 1.1vw;
-  }
-}

@@ -4,7 +4,7 @@
     bottom: 0;
     margin: 16px;
     padding: 12px;
-    border: 1px solid #8885;
+    border: 1px solid #ABC4FF;
     border-radius: 4px;
     z-index: 1;
     text-align: left;
@@ -15,7 +15,7 @@
     margin-bottom: 8px;
 }
 .PWABadge-toast-button {
-    border: 1px solid #8885;
+    border: 1px solid #ABC4FF;
     outline: none;
     margin-right: 5px;
     border-radius: 2px;

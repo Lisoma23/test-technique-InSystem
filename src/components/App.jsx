@@ -11,6 +11,7 @@ export default function App() {
   const [regionStation, setRegionStation] = useState(() => {
     return localStorage.getItem("regionStation") || "";
   });
+  const [showingChart, setShowingChart] = useState(false);
 
   useEffect(() => {
     if (codeStation) {
@@ -25,16 +26,19 @@ export default function App() {
   }, [regionStation]);
 
   return (
-    <div className="App bg-white m-3 rounded-lg">
+    <div className="App bg-white m-3 rounded-lg min-h-[90vh]">
       <header className="App-header w-full max-w-[90vw] mx-auto pt-4 lg:flex lg:w-95vw lg:max-w-[95vw] lg:justify-between">
         <API
           sendCodeStation={setCodeStation}
           sendRegionStation={setRegionStation}
+          setShowingChart={setShowingChart}
         />
-        <GraphEtData station={codeStation} region={regionStation} />
+        {showingChart && (
+          <GraphEtData station={codeStation} region={regionStation} />
+        )}
       </header>
 
-      <div className="flex justify-center my-4">
+      <div className="absolute right-[4.5vw] top-[2.5vh] lg:right-[2vw] lg:top-[4vh]">
         <InstallButton />
       </div>
     </div>

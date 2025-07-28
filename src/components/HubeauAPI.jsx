@@ -9,17 +9,25 @@ import {
 import React from "react";
 import Filter from "./Filter";
 
-export default function HubeauAPI({ sendCodeStation, sendRegionStation }) {
+export default function HubeauAPI({
+  sendCodeStation,
+  sendRegionStation,
+  setShowingChart,
+}) {
   const [columnFilters, setColumnFilters] = React.useState([]);
 
   // Call de l'API Hubeau
   const { isPending, error, data } = useQuery({
     queryKey: ["stationsHubeau"],
-    queryFn: () => 
+    queryFn: () =>
       fetch("https://hubeau.eaufrance.fr/api/v1/temperature/station").then(
         (res) => res.json()
       ),
   });
+
+  React.useEffect(() => {
+    setShowingChart(!isPending && !error);
+  }, [isPending, error]);
 
   const stations = data?.data ?? [];
 
@@ -110,13 +118,13 @@ export default function HubeauAPI({ sendCodeStation, sendRegionStation }) {
   if (error)
     return (
       <p className="text-[2.5vw] lg:text-[1.3vw ]">
-        Une erreur est survenue : {error.message}
+        Une erreur est survenue : veuillez recharger la page
       </p>
     );
 
   return (
     <div className="overflow-x-auto lg:w-[65vw] lg:flex lg:items-center lg:flex-col">
-      <h1 className="text-[3.3vw] border-y-1 py-2 mb-5 text-center font-medium md:text-[3vw] lg:text-[2vw] lg:w-[65vw]">
+      <h1 className="text-[3.3vw] border-b-1 border-accent py-2 mb-5 text-center font-medium sm:border-t-0 md:text-[3vw] lg:text-[2vw] lg:w-[65vw] lg:border-t-1">
         Liste des cours d'eau
       </h1>
       <table className="w-full table-fixed">
@@ -126,7 +134,7 @@ export default function HubeauAPI({ sendCodeStation, sendRegionStation }) {
           <col className="w-[18vw] lg:w-[15vw]" />
           <col className="w-[18vw] lg:w-[15vw]" />
         </colgroup>
-        <thead className="border-b-1">
+        <thead className="border-b-1 border-accent">
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
@@ -179,7 +187,10 @@ export default function HubeauAPI({ sendCodeStation, sendRegionStation }) {
               }}
             >
               {row.getVisibleCells().map((cell) => (
-                <td key={cell.id} className="border-b-1 py-1 px-0.5">
+                <td
+                  key={cell.id}
+                  className="border-b-1  border-accent py-1 px-0.5"
+                >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}
@@ -290,7 +301,7 @@ export default function HubeauAPI({ sendCodeStation, sendRegionStation }) {
                 setInputPage(pagination.pageIndex + 1);
               }
             }}
-            className="border p-1 rounded w-16"
+            className="border border-accent p-1 rounded w-16"
           />
         </span>
       </div>
